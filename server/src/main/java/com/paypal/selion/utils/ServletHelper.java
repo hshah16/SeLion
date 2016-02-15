@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------------------------------------*\
-|  Copyright (C) 2014-2015 PayPal                                                                                     |
+|  Copyright (C) 2014-2016 PayPal                                                                                     |
 |                                                                                                                     |
 |  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance     |
 |  with the License.                                                                                                  |
@@ -33,10 +33,13 @@ import com.paypal.selion.grid.servlets.LoginServlet;
 
 /**
  * A utility class that basically helps in extracting information from Servlet request/responses also has the commonly
- * repeated HTML code used for display purposes
+ * load the HTML template from resource and write it to the response.
  * 
  */
 public final class ServletHelper {
+
+    private static final String MESSAGE_RESOURCE_PAGE_FILE = "/com/paypal/selion/html/message.html";
+
     /**
      * Helps retrieve the parameters and its values as a Map
      * 
@@ -115,124 +118,26 @@ public final class ServletHelper {
      *            The {@link PrintWriter} object that corresponds to a response
      * @param reDirectMessage
      *            Message to display
+     * @throws IOException
      */
-    public static void displayMessageOnRedirect(PrintWriter writer, String reDirectMessage) {
-        writer.write("<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>");
-        writer.write("<html xmlns='http://www.w3.org/1999/xhtml'>");
-        writer.write("<head>");
-        writer.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
-        writer.write("<title>Grid Management Console</title>");
-        writer.write("<link rel='stylesheet' type='text/css' href='/grid/resources/form/view.css' media='all' >");
-        writer.write("<script type='text/javascript' src='/grid/resources/form/view.js'></script>");
-        writer.write("</head>");
-        writer.write("<body id='main_body' >");
-        writer.write("<img id='top' src='/grid/resources/form/top.png' alt=''>");
-        writer.write("<div id='form_container'>");
-        writer.write("<div style=\"margin: 20px 20px 0; padding:0 0 20px;\">");
-        writer.write("<div class='form_description'>");
-        writer.write("<h2>Grid Management Console</h2>");
-        writer.write("<p>" + reDirectMessage + "</p>");
-        writer.write("</div>");
-        writer.write("<div id='footer'>");
-        writer.write("<a href='/grid/admin/" + LoginServlet.class.getSimpleName() + "?form_id=login'>Go To Home</a>");
-        writer.write("&nbsp;&nbsp;&nbsp;&nbsp;");
-        writer.write("<a href='/grid/admin/" + LoginServlet.class.getSimpleName() + "?logout=true'>Logout</a>");
-        writer.write("<p>Created by the SeLion Project</p>");
-        writer.write("</div></div>");
-        writer.write("</div> <img id='bottom' src='/grid/resources/form/bottom.png' alt=''>");
-        writer.write("</body>");
-        writer.write("</html>");
-
+    public static void displayMessageOnRedirect(PrintWriter writer, String reDirectMessage) throws IOException {
+        respondWithTemplate(writer, MESSAGE_RESOURCE_PAGE_FILE, reDirectMessage);
     }
 
     /**
-     * Utility method to display the LoginPage for authenticating user
+     * Utility method to load the template from resource, insert the arguments in template and write to writer
      * 
      * @param writer
      *            The {@link PrintWriter} object that corresponds to a response
-     * @param messageToDisplay
-     *            Status message to be displayed
+     * @param page
+     *            HTML template page for response
+     * @param args
+     *            Data which will be inserted in to the template
+     * @throws IOException
      */
-    public static void loginToGrid(PrintWriter writer, String messageToDisplay) {
-        writer.write("<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Transitional//EN' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd'>");
-        writer.write("<html xmlns='http://www.w3.org/1999/xhtml'>");
-        writer.write("<head>");
-        writer.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
-        writer.write("<title>Grid Management Console</title>");
-        writer.write("<link rel='stylesheet' type='text/css' href='/grid/resources/form/view.css' media='all' >");
-        writer.write("<script type='text/javascript' src='/grid/resources/form/view.js'></script>");
-        writer.write("</head>");
-        writer.write("<body id='main_body' >");
-
-        writer.write("<img id='top' src='/grid/resources/form/top.png' alt=''>");
-        writer.write("<div id='form_container'>");
-
-        writer.write("<form id='form_720145' class='appnitro'  method='post' action='"
-                + LoginServlet.class.getSimpleName() + "'>");
-        writer.write("<div class='form_description'>");
-        writer.write("<h2>Grid Login</h2>");
-        writer.write("<p>" + messageToDisplay + "</p>");
-        writer.write("</div>");
-        writer.write("<ul >");
-
-        writer.write("<li id='li_1' >");
-
-        writer.write("<label class='description' for='userid'>User</label>");
-        writer.write("<div>");
-        writer.write("<input id='userid' name='userid' class='element text medium' type='text' maxlength='255' value=''/>");
-        writer.write("</div>");
-        writer.write("</li>       <li id='li_2' >");
-        writer.write("<label class='description' for='password'>Password </label>");
-        writer.write("<div>");
-        writer.write("<input id='password' name='password' class='element text medium' type='password' maxlength='255' value=''/>");
-        writer.write("</div>");
-        writer.write("</li>");
-
-        writer.write("<li class='buttons'>");
-        writer.write("<input type='hidden' name='form_id' value='login' />");
-
-        writer.write("<input id='saveForm' class='button_text' type='submit' name='submit' value='Submit' />");
-        writer.write("        </li></ul></form>");
-        writer.write("<div id='footer'>");
-        writer.write("<p>Created by the SeLion Project</p>");
-        writer.write("</div>");
-        writer.write("</div> <img id='bottom' src='/grid/resources/form/bottom.png' alt=''>");
-        writer.write("</body>");
-        writer.write("</html>");
-    }
-
-    /**
-     * Utility method to display footer to a HTML page which contains Home and Logout link
-     * 
-     * @param writer
-     *            The {@link PrintWriter} object that corresponds to a response
-     */
-    public static void displayFooter(PrintWriter writer) {
-        writer.write("<div id='footer'>");
-        writer.write("<a href='/grid/admin/" + LoginServlet.class.getSimpleName() + "?form_id=login'>Go To Home</a>");
-        writer.write("&nbsp;&nbsp;&nbsp;&nbsp;");
-        writer.write("<a href='/grid/admin/" + LoginServlet.class.getSimpleName() + "?logout=true'>Logout</a>");
-        writer.write("<p>Created by the SeLion Project</p>");
-        writer.write("</div>");
-        writer.write("</div> <img id='bottom' src='/grid/resources/form/bottom.png' alt=''>");
-    }
-
-    /**
-     * Utility method to display header to a HTML page
-     * 
-     * @param writer
-     *            The {@link PrintWriter} object that corresponds to a response
-     */
-    public static void displayHeader(PrintWriter writer) {
-        writer.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
-        writer.write("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-        writer.write("<head>");
-        writer.write("<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>");
-        writer.write("<title>Grid Management Console</title>");
-        writer.write("<link rel='stylesheet' type='text/css' href='/grid/resources/form/view.css' media='all' >");
-        writer.write("<script type='text/javascript' src='/grid/resources/form/view.js'></script>");
-        writer.write("</head>");
-        writer.write("<body id='main_body'>");
-        writer.write("<img id='top' src='/grid/resources/form/top.png' alt='' >");
+    public static void respondWithTemplate(PrintWriter writer, String page, Object... args)
+            throws IOException {
+        String template = IOUtils.toString(LoginServlet.class.getResourceAsStream(page), "UTF-8");
+        writer.write(String.format(template, args));
     }
 }

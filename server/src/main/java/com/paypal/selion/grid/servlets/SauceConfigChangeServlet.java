@@ -1,5 +1,5 @@
 /*-------------------------------------------------------------------------------------------------------------------*\
-|  Copyright (C) 2014 PayPal                                                                                          |
+|  Copyright (C) 2014-2016 PayPal                                                                                     |
 |                                                                                                                     |
 |  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance     |
 |  with the License.                                                                                                  |
@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.IOUtils;
 import org.openqa.grid.internal.Registry;
 import org.openqa.grid.web.servlet.RegistryBasedServlet;
 
@@ -53,7 +52,7 @@ public class SauceConfigChangeServlet extends RegistryBasedServlet {
     /**
      * Resource path to the sauce config html file
      */
-    public static final String RESOURCE_PAGE_FILE = "/pages/updateSauceConfigPage.html";
+    public static final String RESOURCE_PAGE_FILE = "/com/paypal/selion/html/updateSauceConfigPage.html";
 
     private static final long serialVersionUID = 1L;
 
@@ -78,8 +77,7 @@ public class SauceConfigChangeServlet extends RegistryBasedServlet {
     }
 
     private void loadSauceConfigPage(PrintWriter writer) throws IOException {
-        String finalHtml = IOUtils.toString(this.getClass().getResourceAsStream(RESOURCE_PAGE_FILE), "UTF-8");
-        writer.write(finalHtml);
+        ServletHelper.respondWithTemplate(writer, RESOURCE_PAGE_FILE);
     }
 
     @Override
