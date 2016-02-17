@@ -17,7 +17,6 @@ package com.paypal.selion.grid.servlets;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpStatus;
 import org.openqa.grid.internal.Registry;
 import org.openqa.grid.internal.RemoteProxy;
 import org.openqa.grid.web.servlet.RegistryBasedServlet;
@@ -87,7 +85,6 @@ public class GridAutoUpgradeDelegateServlet extends RegistryBasedServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         process(req, resp);
-
     }
 
     /**
@@ -108,19 +105,12 @@ public class GridAutoUpgradeDelegateServlet extends RegistryBasedServlet {
             return;
         }
 
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpStatus.SC_OK);
-        // idList will have the list of all the nodes that are failed to
-        // auto-upgrade
-        // (node may be restarting at the time of issuing the command to
-        // upgrade).
+        // idList will have the list of all the nodes that are failed to auto-upgrade (node may be restarting at the
+        // time of issuing the command to upgrade).
         String idList = request.getParameter(IDS);
         String downloadJSON = request.getParameter(PARAM_JSON);
-        PrintWriter writer = response.getWriter();
         if (downloadJSON != null) {
-            // proceed with relaying the information to each of the nodes if and
-            // only if the user has provided all
+            // proceed with relaying the information to each of the nodes if and only if the user has provided all
             // information for performing the upgrade.
 
             List<String> pendingProxy = new ArrayList<String>();
@@ -165,26 +155,28 @@ public class GridAutoUpgradeDelegateServlet extends RegistryBasedServlet {
                     ids = ids + temp + ",";
                 }
                 ids = StringUtils.chop(ids);
-                ServletHelper.respondWithTemplate(writer, PENDING_NODE_FILE, ids, ids, downloadJSON);
+                ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(response, PENDING_NODE_FILE,
+                        HttpServletResponse.SC_OK, ids, ids, downloadJSON);
             } else {
-                ServletHelper.displayMessageOnRedirect(writer, "Auto upgrade process initiated on all nodes.");
+
+                ServletHelper.respondAsHtmlWithMessage(response, "Auto upgrade process initiated on all nodes.");
             }
         } else {
             /*
              * Auto Upgrade form will be displayed. This the default page for GridAutoUpgradeDelegateServlet
              */
-            showDefaultPage(writer);
-
+            showDefaultPage(response);
         }
     }
 
-    private void showDefaultPage(PrintWriter writer) throws IOException {
+    private void showDefaultPage(HttpServletResponse response) throws IOException {
         String downloadJSON = "";
         try {
             downloadJSON = FileUtils.readFileToString(new File(SeLionGridConstants.DOWNLOAD_JSON_FILE));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Unable to open download.json file", e);
         }
-        ServletHelper.respondWithTemplate(writer, RESOURCE_PAGE_FILE, downloadJSON);
+        ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(response, RESOURCE_PAGE_FILE,
+                HttpServletResponse.SC_OK, downloadJSON);
     }
 }

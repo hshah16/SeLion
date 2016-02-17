@@ -86,7 +86,7 @@ public class GridForceRestartDelegateServlet extends RegistryBasedServlet {
             String nodes[] = request.getParameterValues("nodes");
 
             if (nodes == null || nodes.length == 0) {
-                ServletHelper.displayMessageOnRedirect(response.getWriter(),
+                ServletHelper.respondAsHtmlWithMessage(response,
                         "Please select at least 1 node in order to perform restart.");
                 return;
             }
@@ -108,7 +108,7 @@ public class GridForceRestartDelegateServlet extends RegistryBasedServlet {
                     LOGGER.warning("Node " + node + " does not support restart.");
                 }
             }
-            ServletHelper.displayMessageOnRedirect(response.getWriter(), "Restart process initiated on all nodes.");
+            ServletHelper.respondAsHtmlWithMessage(response, "Restart process initiated on all nodes.");
         } else {
             List<ProxyInfo> proxies = getProxyInfo();
             ServletHelper.respondAsHtmlUsingJsonAndTemplateWithHttpStatus(response, proxies, RESOURCE_PAGE_FILE,

@@ -17,7 +17,6 @@ package com.paypal.selion.grid.servlets;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,12 +71,11 @@ public class SauceConfigChangeServlet extends RegistryBasedServlet {
             resp.sendRedirect(LoginServlet.class.getSimpleName());
             return;
         }
-        PrintWriter writer = resp.getWriter();
-        loadSauceConfigPage(writer);
+        loadSauceConfigPage(resp);
     }
 
-    private void loadSauceConfigPage(PrintWriter writer) throws IOException {
-        ServletHelper.respondWithTemplate(writer, RESOURCE_PAGE_FILE);
+    private void loadSauceConfigPage( HttpServletResponse resp) throws IOException {
+        ServletHelper.respondAsHtmlUsingTemplate(resp, RESOURCE_PAGE_FILE);
     }
 
     @Override
@@ -114,6 +112,6 @@ public class SauceConfigChangeServlet extends RegistryBasedServlet {
             SauceConfigReader.getInstance().loadConfig();
         }
 
-        ServletHelper.displayMessageOnRedirect(resp.getWriter(), msg);
+        ServletHelper.respondAsHtmlWithMessage(resp, msg);
     }
 }

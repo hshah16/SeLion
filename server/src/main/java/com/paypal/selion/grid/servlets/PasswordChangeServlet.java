@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * This servlet provides the ability to change the password for servlets which require/use {@link LoginServlet}
@@ -40,41 +39,39 @@ public class PasswordChangeServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter writer = resp.getWriter();
-        askForCredentialsPage(writer);
+        askForCredentialsPage(resp);
     }
 
-    private void askForCredentialsPage(PrintWriter writer) throws IOException {
-        loadPage(writer, "Fill out the form to change the management console password");
+    private void askForCredentialsPage(HttpServletResponse resp) throws IOException {
+        loadPage(resp, "Fill out the form to change the management console password");
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        PrintWriter writer = resp.getWriter();
-
         String userid = (String) req.getSession().getAttribute("userId");
         String oldPassword = req.getParameter("oldPassword");
         String newPassword1 = req.getParameter("newPassword1");
         String newPassword2 = req.getParameter("newPassword2");
 
         if (!newPassword1.contentEquals(newPassword2) || newPassword1 == null || newPassword2 == null) {
-            loadPage(writer, "<b>The new passwords do not match</b>");
+            loadPage(resp, "<b>The new passwords do not match</b>");
         } else if (!AuthenticationHelper.authenticate(userid, oldPassword)) {
-            loadPage(writer, "<b>The old password did not match the one on record</b>");
+            loadPage(resp, "<b>The old password did not match the one on record</b>");
 
         } else if (!AuthenticationHelper.changePassword(userid, newPassword1)) {
-            loadPage(writer, "<b>Something went wrong while changing the password.</b>");
+            loadPage(resp, "<b>Something went wrong while changing the password.</b>");
         } else {
             HttpSession session = req.getSession(false);
             if (session != null) {
                 // invalidating the current session so that the password change is reflected in the forth coming session
                 session.invalidate();
             }
-            ServletHelper.displayMessageOnRedirect(writer, "<p align='center'><b>Password changed</b></p>");
+            ServletHelper.respondAsHtmlWithMessage(resp, "<p align='center'><b>Password changed</b></p>");
         }
     }
 
-    private void loadPage(PrintWriter writer, String errorMessage) throws IOException {
-        ServletHelper.respondWithTemplate(writer, RESOURCE_PAGE_FILE, errorMessage);
+    private void loadPage(HttpServletResponse resp, String errorMessage) throws IOException {
+        ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, RESOURCE_PAGE_FILE, HttpServletResponse.SC_OK,
+                errorMessage);
     }
 }

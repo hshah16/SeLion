@@ -57,7 +57,8 @@ public class LoginServlet extends RegistryBasedServlet {
             if (session != null) {
                 session.invalidate();
             }
-            ServletHelper.respondWithTemplate(resp.getWriter(), RESOURCE_PAGE_FILE, "Enter username and password");
+            ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, RESOURCE_PAGE_FILE,
+                    HttpServletResponse.SC_OK, "Enter username and password");
         } else {
             process(req, resp);
         }
@@ -84,8 +85,8 @@ public class LoginServlet extends RegistryBasedServlet {
                 /*
                  * To display error message if invalid username or password is entered
                  */
-                ServletHelper.respondWithTemplate(resp.getWriter(), RESOURCE_PAGE_FILE,
-                        "<b>Invalid Credentials. Enter valid Username and Password</b>");
+                ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, RESOURCE_PAGE_FILE,
+                        HttpServletResponse.SC_OK, "<b>Invalid Credentials. Enter valid Username and Password</b>");
             } else {
 
                 /*
@@ -116,7 +117,8 @@ public class LoginServlet extends RegistryBasedServlet {
             if (session != null) {
                 session.invalidate();
             }
-            ServletHelper.respondWithTemplate(resp.getWriter(), RESOURCE_PAGE_FILE, "Enter username and password");
+            ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, RESOURCE_PAGE_FILE,
+                    HttpServletResponse.SC_OK, "Enter username and password");
         }
 
     }

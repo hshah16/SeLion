@@ -16,7 +16,6 @@
 package com.paypal.selion.utils;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,12 +28,12 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.paypal.selion.grid.servlets.LoginServlet;
+import org.apache.http.HttpStatus;
 
 /**
  * A utility class that basically helps in extracting information from Servlet request/responses also has the commonly
  * load the HTML template from resource and write it to the response.
- * 
+ *
  */
 public final class ServletHelper {
 
@@ -42,7 +41,7 @@ public final class ServletHelper {
 
     /**
      * Helps retrieve the parameters and its values as a Map
-     * 
+     *
      * @param request
      *            A {@link HttpServletRequest} that represents the request from which the parameters and their
      *            corresponding values are to be extracted.
@@ -62,8 +61,8 @@ public final class ServletHelper {
     }
 
     /**
-     * Sends an HTTP response as a application/json document and with a HTTP status code.
-     * 
+     * Sends a HTTP response as a application/json document and with a HTTP status code.
+     *
      * @param resp
      *            A {@link HttpServletResponse} object that the servlet is responding on.
      * @param response
@@ -84,24 +83,24 @@ public final class ServletHelper {
     }
 
     /**
-     * Sends an HTTP response as a text/html document and with a HTTP status code. Injects a json object into the
+     * Sends a HTTP response as a text/html document and with a HTTP status code. Injects a json object into the
      * template before responding.
-     * 
+     *
      * @param resp
      *            A {@link HttpServletResponse} object that the servlet is responding on.
      * @param response
-     *            The response object which will be serialized to a JSON document
+     *            The response object which will be serialized to a JSON document.
      * @param resourcePageTemplate
-     *            The HTML template to use which is loaded as a classpath resource
+     *            The HTML template to use which is loaded as a classpath resource.
      * @param statusCode
-     *            The HTTP status code to send with the response
+     *            The HTTP status code to send with the response.
      * @throws IOException
      */
     public static void respondAsHtmlUsingJsonAndTemplateWithHttpStatus(HttpServletResponse resp, Object response,
             String resourcePageTemplate, int statusCode) throws IOException {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
-        resp.setStatus(HttpServletResponse.SC_OK);
+        resp.setStatus(statusCode);
 
         String template = IOUtils.toString(ServletHelper.class.getResourceAsStream(resourcePageTemplate), "UTF-8");
         final String json = new GsonBuilder().serializeNulls().create().toJson(response);
@@ -112,32 +111,73 @@ public final class ServletHelper {
     }
 
     /**
-     * Utility method used to display a message when re-direction happens in the UI flow
-     * 
-     * @param writer
-     *            The {@link PrintWriter} object that corresponds to a response
-     * @param reDirectMessage
-     *            Message to display
+     * Sends a HTTP response as a text/html document and with a HTTP status code. Injects the the provided arguments into
+     * the template before responding.
+     *
+     * @param resp
+     *            A {@link HttpServletResponse} object that the servlet is responding on.
+     * @param resourcePageTemplate
+     *            The HTML template to use which is loaded as a classpath resource.
+     * @param statusCode
+     *            The HTTP status code to send with the response.
+     * @param args
+     *            Data which will be inserted in to the template. Data must be typed in accordance with template
+     *            expectations -- all args are passed to <code>String.format</code>
      * @throws IOException
      */
-    public static void displayMessageOnRedirect(PrintWriter writer, String reDirectMessage) throws IOException {
-        respondWithTemplate(writer, MESSAGE_RESOURCE_PAGE_FILE, reDirectMessage);
+    public static void respondAsHtmlUsingArgsAndTemplateWithHttpStatus(HttpServletResponse resp,
+            String resourcePageTemplate, int statusCode, Object... args) throws IOException {
+        resp.setContentType("text/html");
+        resp.setCharacterEncoding("UTF-8");
+        resp.setStatus(statusCode);
+
+        String template = IOUtils.toString(ServletHelper.class.getResourceAsStream(resourcePageTemplate), "UTF-8");
+        template = String.format(template, args);
+        resp.getOutputStream().print(template);
+        resp.flushBuffer();
     }
 
     /**
-     * Utility method to load the template from resource, insert the arguments in template and write to writer
-     * 
-     * @param writer
-     *            The {@link PrintWriter} object that corresponds to a response
-     * @param page
-     *            HTML template page for response
-     * @param args
-     *            Data which will be inserted in to the template
+     * Sends a HTTP response as a text/html document and with a HTTP status code.
+     *
+     * @param resp
+     *            A {@link HttpServletResponse} object that the servlet is responding on.
+     * @param resourcePageTemplate
+     *            The HTML template to use which is loaded as a classpath resource.
+     * @param statusCode
+     *            The HTTP status code to send with the response.
      * @throws IOException
      */
-    public static void respondWithTemplate(PrintWriter writer, String page, Object... args)
+    public static void respondAsHtmlUsingTemplateWithHttpStatus(HttpServletResponse resp, String resourcePageTemplate,
+            int statusCode) throws IOException {
+        respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, resourcePageTemplate, statusCode);
+    }
+
+    /**
+     * Sends a HTTP response as a text/html document. Replies with HTTP status code 200 OK
+     *
+     * @param resp
+     *            A {@link HttpServletResponse} object that the servlet is responding on.
+     * @param resourcePageTemplate
+     *            The HTML template to use which is loaded as a classpath resource.
+     * @throws IOException
+     */
+    public static void respondAsHtmlUsingTemplate(HttpServletResponse resp, String resourcePageTemplate)
             throws IOException {
-        String template = IOUtils.toString(LoginServlet.class.getResourceAsStream(page), "UTF-8");
-        writer.write(String.format(template, args));
+        respondAsHtmlUsingTemplateWithHttpStatus(resp, resourcePageTemplate, HttpStatus.SC_OK);
+    }
+
+    /**
+     * Utility method used to display a message when re-direction happens in the UI flow. Uses the template
+     * {@link #MESSAGE_RESOURCE_PAGE_FILE}
+     *
+     * @param resp
+     *            A {@link HttpServletResponse} object that the servlet is responding on.
+     * @param message
+     *            Message to display.
+     * @throws IOException
+     */
+    public static void respondAsHtmlWithMessage(HttpServletResponse resp, String message) throws IOException {
+        respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, MESSAGE_RESOURCE_PAGE_FILE, HttpStatus.SC_OK, message);
     }
 }
