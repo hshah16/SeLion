@@ -120,7 +120,8 @@ public class GridAutoUpgradeDelegateServlet extends RegistryBasedServlet {
                     if (eachProxy == null) {
                         continue;
                     }
-                    if ((eachProxy instanceof SeLionRemoteProxy) && (((SeLionRemoteProxy) eachProxy).supportsAutoUpgrade())) {
+                    if ((eachProxy instanceof SeLionRemoteProxy)
+                            && (((SeLionRemoteProxy) eachProxy).supportsAutoUpgrade())) {
                         if (!((SeLionRemoteProxy) eachProxy).upgradeNode(downloadJSON)) {
                             pendingProxy.add(eachProxy.getId());
                         }

@@ -111,8 +111,8 @@ public final class ServletHelper {
     }
 
     /**
-     * Sends a HTTP response as a text/html document and with a HTTP status code. Injects the the provided arguments into
-     * the template before responding.
+     * Sends a HTTP response as a text/html document and with a HTTP status code. Injects the the provided arguments
+     * into the template before responding.
      *
      * @param resp
      *            A {@link HttpServletResponse} object that the servlet is responding on.

@@ -71,7 +71,7 @@ public class PasswordChangeServlet extends HttpServlet {
     }
 
     private void loadPage(HttpServletResponse resp, String errorMessage) throws IOException {
-        ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, RESOURCE_PAGE_FILE, HttpServletResponse.SC_OK,
-                errorMessage);
+        ServletHelper.respondAsHtmlUsingArgsAndTemplateWithHttpStatus(resp, RESOURCE_PAGE_FILE,
+                HttpServletResponse.SC_OK, errorMessage);
     }
 }
