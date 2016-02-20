@@ -15,10 +15,16 @@
 
 package ${package}.logging;
 
-import com.paypal.selion.configuration.LoggerConfig;
-import com.paypal.selion.logger.SeLionLogger;
-import com.paypal.test.utilities.logging.SimpleLogger;
-import com.paypal.test.utilities.logging.SimpleLoggerSettings;
+
+
+
+
+harsh shah ashdjkasghdjashdjka
+
+dasjdhjkasgdhj
+
+
+
 
 /**
  * An example logger which leverages SeLion's {@link SimpleLogger}. 
